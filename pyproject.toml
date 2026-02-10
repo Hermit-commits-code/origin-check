@@ -1,0 +1,18 @@
+[project]
+name = "origin"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { email = "hotcupofjoe2013@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "gitpython>=3.1.46",
+    "pydantic>=2.12.5",
+    "rich>=14.3.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.29,<0.10.0"]
+build-backend = "uv_build"
