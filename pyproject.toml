@@ -1,18 +1,35 @@
 [project]
-name = "origin"
+name = "origin-miner"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Git forensics tool to audit commit velocity and volume."
 readme = "README.md"
 authors = [
-    { email = "hotcupofjoe2013@gmail.com" }
+    { name = "Joe", email = "joe@example.com" }
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.10"
 dependencies = [
-    "gitpython>=3.1.46",
-    "pydantic>=2.12.5",
-    "rich>=14.3.2",
+    "gitpython>=3.1.7",
+    "rich>=13.7.0",
 ]
 
+[project.scripts]
+miner-audit = "miner:main"
+
 [build-system]
-requires = ["uv_build>=0.9.29,<0.10.0"]
-build-backend = "uv_build"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# FIX 1: Tell Hatch to include miner.py directly
+[tool.hatch.build.targets.wheel]
+packages = ["miner.py"]
+
+# FIX 2: Use the non-deprecated dependency group syntax
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.12.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
