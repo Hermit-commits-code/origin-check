@@ -1,6 +1,6 @@
 [project]
 name = "origin-miner"
-version = "0.1.0"
+version = "0.4.0"
 description = "A Git forensics tool to audit commit velocity and volume."
 readme = "README.md"
 authors = [
