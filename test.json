@@ -1,0 +1,12 @@
+[
+    {
+        "hash": "3a0581b",
+        "author": "joe",
+        "timestamp": "2026-02-11T07:50:04",
+        "changes": 395,
+        "files": 8,
+        "entropy": 49.38,
+        "delta_seconds": 50080,
+        "is_suspicious": false
+    }
+]
