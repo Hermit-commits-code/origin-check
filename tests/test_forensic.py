@@ -1,12 +1,18 @@
-def test_audit_data_structure_v4(mocker):
-    # GIVEN: A mocked commit with specific files
-    mock_commit = mocker.MagicMock()
-    mock_commit.stats.files = {"file_a.py": {}, "file_b.py": {}}
-    mock_commit.stats.total = {"lines": 200}
+def test_robotic_signature_detection(mocker):
+    # GIVEN: A mock commit with 40% comment density and 5s delta
+    from miner import calculate_comment_ratio, is_commit_suspect
 
-    # WHEN: We process this in our audit logic
-    file_names = [str(f) for f in mock_commit.stats.files.keys()]
+    # Mock diff containing 2 code lines and 2 comment lines (50%)
+    mock_diff = (
+        "+ print('hello')\n+ # AI generated comment\n+ x = 10\n+ '''Docstring'''"
+    )
 
-    # EXPECT: A list of strings, not objects
-    assert all(isinstance(f, str) for f in file_names)
-    assert len(file_names) == 2
+    # WHEN: Calculating ratio and suspicion
+    ratio = calculate_comment_ratio(mock_diff)
+    suspect = is_commit_suspect(
+        delta_seconds=5, total_changes=4, entropy=2.0, comment_ratio=ratio
+    )
+
+    # EXPECT: Suspect is True due to is_robotic (speed + high comments)
+    assert ratio == 0.5
+    assert suspect is True
