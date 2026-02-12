@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime as dt
 
@@ -7,6 +8,9 @@ import git
 from rich.console import Console
 from rich.table import Table
 
+from database import DatabaseManager
+
+VERSION = "0.7.0"
 console = Console()
 
 
@@ -53,6 +57,7 @@ def is_commit_suspect(
 
 
 def audit_repository(repo_path=".", target_author=None):
+    db = DatabaseManager()
     report_data = []
     try:
         repo = git.Repo(repo_path)
@@ -67,19 +72,31 @@ def audit_repository(repo_path=".", target_author=None):
                 "[yellow]Not enough commits to perform delta analysis.[/yellow]"
             )
             return []
+        # 1. Cache Lookup
+        needed_work = []
+        ratios_map = {}
 
-        # v0.6.0: Collect work for parallel execution
-        work_packets = [
-            (repo_path, commits[i + 1].hexsha, commits[i].hexsha)
-            for i in range(len(commits) - 1)
-        ]
+        for i in range(len(commits) - 1):
+            curr_sha = commits[i].hexsha
+            prev_sha = commits[i + 1].hexsha
 
-        # Dispatch to worker pool
-        with ProcessPoolExecutor() as executor:
-            results_list = list(executor.map(process_commit_diff, work_packets))
-            ratios_map = dict(results_list)
+            # Check SQLite first
+            cached = db.get_cached_commit(curr_sha)
+            if cached:
+                # cached is a tuple: (comment_ratio, is_suspicious, entropy)
+                ratios_map[curr_sha] = cached[0]
+            else:
+                needed_work.append((repo_path, prev_sha, curr_sha))
+        # 2. COMPUTE PHASE (Only for Cache Misses)
+        if needed_work:
+            console.print(f"[blue]Analyzing {len(needed_work)} new commits...[/blue]")
+            with ProcessPoolExecutor() as executor:
+                new_results = list(executor.map(process_commit_diff, needed_work))
+                for sha, ratio in new_results:
+                    ratios_map[sha] = ratio
 
-        table = Table(title="Origin-Miner v0.6.0 | Performance Engine")
+        # 3. REPORTING & PERSISTENCE PHASE
+        table = Table(title="Origin-Miner v0.7.0 | SQLite-Optimized")
         table.add_column("Hash", style="cyan")
         table.add_column("Changes", style="blue")
         table.add_column("Files", style="magenta")
@@ -102,6 +119,8 @@ def audit_repository(repo_path=".", target_author=None):
                 delta_seconds, total_changes, entropy, comment_ratio
             )
             color = "red" if is_suspicious else "yellow"
+            # SAVE TO CACHE (If it wasn't there before)
+            db.save_commit(curr.hexsha, comment_ratio, is_suspicious, entropy)
 
             files_display = "\n".join(file_names[:3])
             if files_touched > 3:
@@ -142,7 +161,26 @@ def main():
     parser.add_argument("--path", default=".", help="Path to git repository")
     parser.add_argument("--author", help="Filter by author name")
     parser.add_argument("--export", help="Export report to JSON file")
+    # New v0.7.0 Flags
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
+    parser.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Delete the local forensic database and start fresh",
+    )
+
     args = parser.parse_args()
+
+    if args.clear_cache:
+        db_file = ".miner_cache.db"
+        if os.path.exists(db_file):
+            os.remove(db_file)
+            console.print(
+                "[bold green]✔ Forensic cache cleared successfully.[/bold green]"
+            )
+        else:
+            console.print("[yellow]No cache file found to clear.[/yellow]")
+        return  # Exit after clearing
 
     results = audit_repository(args.path, args.author)
 

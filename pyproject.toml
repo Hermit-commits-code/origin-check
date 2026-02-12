@@ -1,12 +1,12 @@
 [project]
 name = "origin-miner"
-version = "0.6.0"
-description = "A Git forensics tool to audit commit velocity and volume."
+version = "0.7.0"
+description = "A high-performance forensic tool to detect non-human code contributions in Git history."
 readme = "README.md"
 authors = [
     { name = "Joe", email = "joe@example.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "gitpython>=3.1.7",
     "rich>=13.7.0",
@@ -22,7 +22,7 @@ build-backend = "hatchling.build"
 
 # FIX 1: Tell Hatch to include miner.py directly
 [tool.hatch.build.targets.wheel]
-packages = ["miner.py"]
+packages = ["."]
 
 # FIX 2: Use the non-deprecated dependency group syntax
 [dependency-groups]

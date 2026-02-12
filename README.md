@@ -1,11 +1,23 @@
-# Origin-Check
+# 🕵️ Origin-Miner
 
-A lean tool for auditing Git history to detect AI vs. Human patterns.
+[![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)](https://github.com/youruser/origin-miner)
+[![Python](https://img.shields.io/badge/python-3.14+-yellow.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Build Status](https://img.shields.io/badge/tests-7%20passed-brightgreen.svg)](tests/)
 
-## 📈 Progress Log
+**Origin-Miner** is a high-performance Git forensic tool designed to detect non-human code contributions. By analyzing commit velocity, file entropy, and semantic intelligence, it flags suspicious "robotic" patterns in project history.
 
-- [x] **v0.1.0**: Project Init & Environment [CURRENT]
-- [x] **v0.2.0**: Basic Miner (Commit deltas & Metadata)
-- [ ] **v0.3.0**: Advanced Miner (LOC per minute & Filter logic)
-- [ ] **v0.4.0**: Pattern Detection Logic
-- [ ] **v0.5.0**: CLI & JSON Export
+---
+
+## 🚀 Key Features
+
+* **Semantic Intelligence:** Detects AI-signature patterns through documentation-to-logic ratios.
+* **Multi-Core Engine:** Parallelized diff analysis using Python's `ProcessPoolExecutor` for lightning-fast audits.
+* **Forensic Triage:** Visual terminal tables with color-coded risk assessment.
+* **Data Persistence:** Export detailed forensic reports in JSON format for long-term auditing.
+
+## 🛠️ Installation
+
+```bash
+# Using uv (recommended)
+uv tool install .
