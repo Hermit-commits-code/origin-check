@@ -4,7 +4,7 @@ import re
 
 
 class ForensicEngine:
-    """v0.8.0: High Precision forensic engine for code authorship analysis."""
+    """v1.0.0: Stable Release forensic engine for code authorship analysis."""
 
     # Cognitive Load Weights: Higher they are, harder it is for humans to write quickly.
     FILE_WEIGHTS = {

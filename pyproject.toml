@@ -1,6 +1,6 @@
 [project]
 name = "origin-miner"
-version = "0.7.0"
+version = "1.0.0"
 description = "A high-performance forensic tool to detect non-human code contributions in Git history."
 readme = "README.md"
 authors = [
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-miner-audit = "miner:main"
+miner = "miner:main"
 
 [build-system]
 requires = ["hatchling"]

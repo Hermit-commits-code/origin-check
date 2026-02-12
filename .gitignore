@@ -1,12 +1,11 @@
-# Python-generated files
+# Forensic Cache Databases
+.miner_cache.db
+miner_cache.db
+
+# Python environment/builds
 __pycache__/
-*.py[oc]
-build/
+*.py[cod]
 dist/
-wheels/
-*.egg-info
-
-# Virtual environments
+build/
+*.egg-info/
 .venv
-REFERENCE.md
-
