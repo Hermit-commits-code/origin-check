@@ -4,7 +4,7 @@ import sqlite3
 class DatabaseManager:
     """v0.7.0: Handling Forensic data persistance by using SQLite3"""
 
-    def __init__(self, db_path="miner_cache.db"):
+    def __init__(self, db_path=".miner_cache.db"):
         self.db_path = db_path
         self._init_db()
 
